@@ -111,8 +111,8 @@ nbi_hampshire |>
        y = "Structural Evaluation",
        col = "Structure Evaluation Rating") +
   theme_minimal()
-##TA Feedback: Your graph looks nice, I would suggest choosing a different variable for your color and y-axis next time +2.5
-##Total for Q1-Q3: 8.5 pts
+##TA Feedback: Your graph looks nice, I would suggest choosing a different variable for your color and y-axis next time +3
+##Total for Q1-Q3: 9 pts
 ```
 
 Instead of a palette that has distinct colors for each variable, the palette changes to that of a gradient, and colors get darker or lighter depending on where they lie on said gradient. This information tells me the overall trend over time for the bridges constructed based on what year they were built. As you scan the graph, the bridges built more recently have a higher structure evaluation rating compared to the older bridges.
@@ -136,7 +136,7 @@ nbi_hampshire |>
        shape = "Material Bridge was Built With") +
   theme_minimal()
 ##TA Feedback: Your graph looks amazing! +3
-##Total for Q1-Q4: 11.5 pts
+##Total for Q1-Q4: 12 pts
 ```
 :::
 
@@ -158,7 +158,7 @@ nbi_hampshire |>
        shape = "Material Bridge was Built With") +
   theme_minimal()
 ##TA Feedback: Your graph is almost perfect remember to add a label for point size next time +2.5
-##Total for Q1-Q5: 14 pts
+##Total for Q1-Q5: 14.5 pts
 ```
 
 It's a bit hard to say since the data points are hard to read on the graph (they're all jumbled up in this one area in the middle), but generally, it's telling me that the more money spent on bridge construction, the higher score it gets on its structural evaluation rating. Also, it seems that prestressed concrete tends to get the highest scores on structural evaluation ratings, but also cost the most to make.
@@ -181,7 +181,7 @@ nbi_ma |>
   theme_minimal() + 
   scale_y_log10(labels = scales::comma)
 ##TA Feedback: Nice graph! +3
-##Total for Q1-Q6: 17 pts
+##Total for Q1-Q6: 17.5 pts
 ```
 
 :::
@@ -202,7 +202,7 @@ nbi_ma |>
   theme_minimal() +
   scale_x_binned(breaks = c(1954, 2021), labels = c("Eisenhower Elected", "Today"))
 ##TA Feedback: This graph looks amazing! +3
-##Total for Q1-Q7: 20 pts
+##Total for Q1-Q7: 20.5 pts
 ```
 :::
 
@@ -225,7 +225,7 @@ nbi_hampshire |>
   theme_minimal() +
   scale_color_brewer(palette = "Dark2")
 ##TA Feedback: Nice graph +3
-##Total for Q1-Q8: 23 pts
+##Total for Q1-Q8: 23.5 pts
 ```
 
 :::
@@ -248,7 +248,7 @@ nbi_hampshire |>
   theme_minimal() +
   scale_color_distiller(palette = "Purples")
 ##TA Feedback: This looks good except you're missing the reverse direction part of scale_color_distiller(), it should look like this: scale_color_distiller(palette = "Purples", direction = 1) +2.5
-##Total for Q1-Q9: 25.5
+##Total for Q1-Q9: 26 pts
 ```
 
 
@@ -270,7 +270,7 @@ nbi_ma |>
   theme_minimal() +
   facet_wrap(vars(STRUCTURE_KIND_043A_L))
 ##TA Feedback: This final graph looks great, nice job! +3
-##Total for Q1-Q10: 28.5
+##Total for Q1-Q10: 29 pts
 ```
 :::
 
@@ -278,5 +278,6 @@ nbi_ma |>
 ## Ethical Considerations
 Federal regulations require that highway bridges and public road bridges in the United States must be inspected every two years, and bridge inspectors must follow a strict set of guidelines when performing a bridge inspection. If a bridge is discovered to have certain structural deficiencies, it may be shut down or may require more frequent inspections. Despite these widespread safety standards, we still sometimes see catastrophic bridge failures or discover critical bridge conditions that could potentially put lives at risk. This could result from human error, low vigilance or attention to detail during inspections, lack of understanding/adherence to inspection standards, or inspection equipment malfunctions. What kinds of interventions do you think should be put in place to ensure the accountability of bridge inspection data? What kinds of policies, practices, or programs could help to minimize mistakes or encourage that mistakes be fixed promptly? Share your ideas on our `discussions` Slack channel.
 
-##TA Grading: Final Score: 28.5/30 or 95%
+##TA Grading: Final Score: 29/30 or 96.66%
+
 :::
