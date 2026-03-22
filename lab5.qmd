@@ -412,7 +412,7 @@ sqf_2011 |>
 Below, in 2-3 sentences, summarize what you learn from reviewing the summary statistics from the code above. What does this tell us about the constitutionality of 2011 stop and frisk activity in NYC?
 
 ```{r, eval = FALSE}
-According to the code above, Black and White-Hispanic people had disproportionately more stops than other race categories, with over 76% of stops coming from those two race categories. It also seems like the percent of people getting stopped and frisked in one occasion occurs more frequently in those of Black, Black-Hispanic, and White-Hispanic descent than other races, with White notably being the least frisked out of the racial categories. It also seems like, although Black and Hispanic people get stopped and frisked much more frequently, the percentage of weapons found and the percentage of arrests made or summons issued tend to be the same across the racial groups, with little variability.
+According to the code above, Black and White-Hispanic people had disproportionately more stops than other race categories, with over 76% of stops coming from those two race categories. It also seems like the percent of people getting stopped and frisked in one occasion occurs more frequently in those of Black, Black-Hispanic, and White-Hispanic descent than other races, with White notably being the least frisked out of the racial categories. It also seems like, although Black and Hispanic people get stopped and frisked much more frequently, the percentage of weapons found and the percentage of arrests made or summons issued tend to be the same across the racial groups, with very little variability.
 ```
 
 :::
