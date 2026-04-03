@@ -23,7 +23,7 @@ Before we dive into the mechanics of the model, discuss with others around you a
 
 Think about the following sentence: "I am having a great day!". What rules or considerations do I need to follow linguistically in order to convey that sentiment? Is there an order to how those words are being said?
 
-
+A: If you were to say that following sentence, for it to be true, you'd need to be feeling this feeling yourself (I am), you'd need to be feeling it at the present moment (having), you'd need to be feeling great (whatever your metric of "great" is), and the thing that is "great" would need to be your day, in that order.
 
 :::
 
@@ -32,7 +32,7 @@ Think about the following sentence: "I am having a great day!". What rules or co
 
 Think about the following sentence: "I am having a great day!". Are there replacements I can make for each word that would still result in a comprehensible sentence?
 
-
+You can change any part of the sentence and it would still be comprehensible. For example, if it wasn't YOU that is having a great day, but HER, you could say "She is having a great day!" If you were having a great day in the past, you could say "I was having a great day!" or "I had a great day!" If in fact you didn't have a great day, but feel some type of other way, you could say "I am having a bad day," for example. And if you wanted to change the time period, you could say "I am having a great morning," as an example. All of those would still be comprehensible.
 
 :::
 
@@ -41,7 +41,7 @@ Think about the following sentence: "I am having a great day!". Are there replac
 
 Think about the following sentence: "I am having a great day!". How often am I using each of these words in a sentence? Does it depend on the situation?
 
-
+It really depends on the situation. Words such as "I," "am," and "a" are some of the most commonly used words in the English language, so those are the most likely words in the sentence above to be used in any sentence. In the question asked, you used "I," "am," and "a" as well! With the other words in the sentence above, it largely depends on context if you were to use them in a sentence.
 
 :::
 
@@ -98,7 +98,7 @@ Answer the following questions below:
 
 Look at `wordData`. The `prob` column provides the probability of that word being used given what its part of speech is. Determine if these probabilities are legitimate for each of these words. What other considerations do I need to make when determining the probability?
 
-
+I think the probabilities make sense considering the part of speech they are. Some other things you may consider when determining the probability are the context/situation that it's used in, the people saying these words, and the frequency of these words being said. For example, if a model was to calculate the probability of nouns being said in the comment section of a reel on Instagram that was marketed directly to the Gen Z population, the probability of some of these nouns being said could potentially change drastically.
 
 :::
 
@@ -107,7 +107,7 @@ Look at `wordData`. The `prob` column provides the probability of that word bein
 
 Look at `tranMatData`. Each row provides the probability that the corresponding word will be followed by the word specified by the column. Determine if these probabilities are legitimate for each of these words. What other considerations do I need to make when determining the probability?
 
-
+I don't think the probabilities are exactly right. When looking at the tranMatData set, the probability that a noun would be used after another noun is zero, but when the word becomes a verb, all of a sudden the probability of a noun coming after said verb changes based on which noun had the highest probability of it being said. For example, let's take the verb "feel" in row 47. By the logic of the tranMatData set, the probability that the word "time" will follow right after the word "feel" is ~0.144, same as all the other verbs listed. However, there are other verbs on the list, such as "tell," that make more sense for "time" to come after it. There are more instances of "tell time" being said than "feel time," mostly because the phrase "feel time" just doesn't make sense. So in my opinion, it really depends on the context of it being used, and the current probabilities listed on the tranMatData set don't make sense for every word there; it just relies on the probability of said word being used on its own (if that makes sense).
 
 :::
 
@@ -116,7 +116,7 @@ Look at `tranMatData`. Each row provides the probability that the corresponding 
 
 Based on both of the datasets, what are some issues that may arise when using this data?
 
-
+An issue that I see with both of these datasets is how unspecific it is to each word, and also how unspecific it is to different contexts. For example, in the wordData set, there's a 0.90 probability that the word coming after an adjective will be a noun, and a 0.1 probability that it will be "other." However, language is so flexible, so to say that there's a 0 probability of a verb or another adjective or a preposition coming after an adjective is simply wrong.
 
 :::
 
@@ -152,7 +152,7 @@ As you've probably discussed in previous questions, there are many, many conside
 
 Run the code above 5 different times using a `numWords` of 6. Copy and paste the results below.
 
-
+[1] "the world get time do time"
 
 :::
 
@@ -161,7 +161,7 @@ Run the code above 5 different times using a `numWords` of 6. Copy and paste the
 
 What are some observations you notice from the sentences? Are there any similarities? Differences? Confusions? Do the sentences make sense?
 
-
+Every randomly generated sentence starts with "the," and what follows is usually a random noun (though some nouns appear more than others, most likely due to that probability), a random verb, another random noun, another random verb, and another random noun. After running it a couple more times, sometimes it changes to prepositions and adjectives, but quite rarely does it actually.
 
 :::
 
@@ -173,7 +173,7 @@ What are some factors we may want to factor into our program aside from:
 - the probability of a word being used, and
 - what the next word will be given the part of speech of the previous word?
 
-
+Some factors we can consider are whether putting certain words before or after a word would make the sentence illogical, and if it is, we can remove it from ever becoming an output, so that only logical combinations can be results. We can also put factors such as changing the tense of a verb depending on the word before or after it.
 
 :::
 
@@ -182,7 +182,7 @@ What are some factors we may want to factor into our program aside from:
 
 Suppose we attempted to use this model in lieu of more sophisticated programs like ChatGPT, Gemini, and Claude. What would your perception be? How would this lead to issues with resolving prompts you fed to the programs?
 
-
+If this type of model were to be used for larger AI models, we'd be getting results that made absolutely zero sense. You could be asking these models a question, but the response it gives you wouldn't have anything to do with the question asked; rather, it would just spit out words that have higher probabilities being used in a sentence in a general context, and it won't matter if it makes sense or not.
 
 :::
 
