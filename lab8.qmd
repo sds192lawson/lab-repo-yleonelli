@@ -128,7 +128,13 @@ Write code to determine the 10 medical practitioners that received the most mone
 # Uncomment below and write data wrangling code
 
 top_10_doctors <- open_payments |>
-  top_10_doctors()
+  mutate(Date_of_Payment = lubridate::mdy(Date_of_Payment)) |>
+  filter(lubridate::year(Date_of_Payment) == 2024) |>
+  group_by(Covered_Recipient_NPI) |>
+  summarize(sum_total_payments = sum(Total_Amount_of_Payment_USDollars, na.rm = TRUE)) |>
+  arrange(desc(sum_total_payments)) |>
+  select(Covered_Recipient_NPI, sum_total_payments) |>
+  head(10)
 ```
 
 :::
@@ -143,7 +149,8 @@ Create a vector of `top_10_doctors_ids` from `top_10_doctors`, using the `pull()
 ```{r}
 # Uncomment and write code below to pull the top 10 doctor IDs into a vector
 
-# top_10_doctors_ids <- top_10_doctors |>
+top_10_doctors_ids <- top_10_doctors |>
+  pull(Covered_Recipient_NPI)
 ```
 
 :::
@@ -162,12 +169,16 @@ Once this function has been defined, select the appropriate `map()` function to 
 
 ```{r}
 get_doctor_name <- function(doctor_id){
-  # Write function code here
+  open_payments |>
+    filter(Covered_Recipient_NPI == doctor_id) |>
+    summarize(Covered_Recipient_Full_Name = first(Covered_Recipient_Full_Name)) |>
+    pull(Covered_Recipient_Full_Name)
 }
 
 # Iterate the top_10_doctors_ids vector through get_doctor_name and store the results in a character vector
 
-# top_10_doctors_names <- 
+top_10_doctors_names <- top_10_doctors_ids |>
+  map_chr(get_doctor_name)
 ```
 
 :::
@@ -182,9 +193,21 @@ Then, use the `map()` function to apply `calculate_payment_type_amts` to each el
 Finally, pipe in `set_names(top_10_doctors_names)` to set the names for each data frame in the list to the doctor's name.
 
 ```{r}
-# Write calculate_payment_type_amts function here
+calculate_payment_type_amts <- function(doctor_id) {
+  open_payments |>
+    filter(Covered_Recipient_NPI == doctor_id) |>
+    group_by(Nature_of_Payment_or_Transfer_of_Value) |>
+    summarize(
+      num_payments = sum(Number_of_Payments_Included_in_Total_Amount, na.rm = TRUE),
+      total_payments = sum(Total_Amount_of_Payment_USDollars, na.rm = TRUE),
+      .groups = "drop")
+}
 
 # Iterate calculate_payment_type_amts over top_10_doctors_ids and set names to top_10_doctors_names
+
+payment_type_amts_list <- top_10_doctors_ids |>
+  map(calculate_payment_type_amts) |>
+  set_names(top_10_doctors_names)
 ```
 
 :::
@@ -204,9 +227,26 @@ After you've written this function, select the appropriate map function to apply
 > Optional Challenge: Extend your code to include the first listed specialty for each top 10 doctor as a subtitle in each plot. 
 
 ```{r}
-# Write payments_calendar function here
+payments_calendar <- function(doctor_id, doctor_name) {
+  open_payments |>
+    filter(Covered_Recipient_NPI == doctor_id) |>
+    ggplot(aes(
+      x = lubridate::day(Date_of_Payment),
+      y = "")) +
+    geom_point() +
+    facet_wrap(~ lubridate::month(Date_of_Payment, label = TRUE)) +
+    labs(
+      title = doctor_name,
+      x = "Day of Payment",
+      y = "")
+}
 
 # Iterate payments_calendar over top_10_doctors_ids and top_10_doctors_ids to create 10 plots
+
+payment_calendar_plots <- map2(
+  top_10_doctors_ids,
+  top_10_doctors_names,
+  payments_calendar)
 ```
 
 :::
@@ -232,11 +272,34 @@ Plot your resulting data frame as a column plot, attempting (to the best of your
 > Optional Challenge: List the doctor's full name in each facet band, rather than the the doctor's ID. 
 
 ```{r}
-# Write calculate_manufacturer_payments function here
+calculate_manufacturer_payments <- function(doctor_id) {
+  open_payments |>
+    filter(Covered_Recipient_NPI == doctor_id) |>
+    group_by(
+      Covered_Recipient_NPI,
+      Applicable_Manufacturer_or_Applicable_GPO_Making_Payment_Name,
+      Form_of_Payment_or_Transfer_of_Value) |>
+    summarize(
+      total_payments = sum(Total_Amount_of_Payment_USDollars, na.rm = TRUE),
+      .groups = "drop")
+}
 
 # Iterate calculate_manufacturer_payments over top_10_doctors_ids here
 
+manufacturer_payments_df <- top_10_doctors_ids |>
+  map_df(calculate_manufacturer_payments)
+
 # Plot resulting data frame here
+
+ggplot(manufacturer_payments_df, aes(
+  x = Applicable_Manufacturer_or_Applicable_GPO_Making_Payment_Name,
+  y = total_payments)) +
+  geom_col() +
+  facet_wrap(~ Covered_Recipient_NPI) +
+  labs(
+    x = "Manufacturer",
+    y = "Total Payments",
+    title = "Payments for Top 10 Doctors")
 ```
 
 :::
