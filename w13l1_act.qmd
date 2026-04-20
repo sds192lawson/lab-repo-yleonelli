@@ -1,0 +1,19 @@
+---
+title: "w13l1_act"
+author: "Ysabella Leonelli"
+format: html
+editor: visual
+---
+
+Question 1: What function do we use to encode a data frame with geometry based on lat/long data?
+
+A: st_as_sf()
+
+Question 2: What function do we use convert to a new CRS?
+
+A: st_transform()
+
+Question 3: What CRS does Leaflet expect data to be in?
+
+A: WGS 84 (EPSG:4326, latitude/longitude)
+
