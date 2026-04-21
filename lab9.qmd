@@ -1,6 +1,6 @@
 ---
 title: "Lab #9: Mapping with Leaflet"
-author: "PUT NAME HERE"
+author: "Ysabella Leonelli"
 format:
   html:
     code-fold: false
@@ -52,12 +52,12 @@ Adjust the code below to center the map on Louisiana. You'll need to look up the
 
 ```{r}
 # Uncomment and adjust code below.
-#la_map <- leaflet(width = "100%") %>%
-#  setView(lat = 0.00, lng = 0.00, zoom = 0) %>%
-#  addProviderTiles(providers$Stamen.Toner)
+la_map <- leaflet(width = "100%") |>
+  setView(lat = 30.5, lng = -91.5, zoom = 6) |>
+  addProviderTiles("OpenStreetMap") # <- had to change the provider tile from the original template because it wasn't working
 
 # Uncomment below to view the map!
-# la_map
+la_map
 ```
 
 :::
@@ -71,9 +71,9 @@ Then transform the CRS to 4326 using `st_transform()`.
 ```{r}
 # Uncomment and fill in the blanks below. The column for longitude will go in the first coordinate position, and latitude will go in the second. 
 
-#tri_la_2023 <- tri_la_2023 %>%
-#  st_as_sf(coords = c("____", "____"), crs = ____) %>%
-#  st_transform(____)
+tri_la_2023 <- tri_la_2023 |>
+  st_as_sf(coords = c("X13..LONGITUDE", "X12..LATITUDE"), crs = 4269) |>
+  st_transform(4326)
 ```
 
 :::
@@ -87,7 +87,10 @@ In the code block below, pipe `addCircleMarkers()` onto the basemap and list `da
 ```{r}
 # Uncomment and add the function
 
-#la_map %>%
+la_map |> leaflet(width = "100%") |>
+  setView(lat = 30.5, lng = -91.5, zoom = 6) |>
+  addProviderTiles("OpenStreetMap") |>
+  addCircleMarkers(data = tri_la_2023)
 ```
 
 :::
@@ -99,7 +102,17 @@ In the code block below, pipe `addCircleMarkers()` onto the basemap and list `da
 Copy the map you just created into the code chunk below, and pipe the `addCircleMarkers()` function onto your code. Check out the help pages for the `addCircleMarkers()` function, and add some arguments to help with the map's legibility. At the very least, you should adjust the `radius`, `weight`, `color`, `fillColor`, and `fillOpacity`, and understand how each of these arguments will change the style of the map. For now you can set the `color` to "black" and the `fillColor` to "white". See if you can get your map to match mine below. 
 
 ```{r}
-# Copy previous map here! 
+# Copy previous map here!
+la_map |> leaflet(width = "100%") |>
+  setView(lat = 30.5, lng = -91.5, zoom = 6) |>
+  addProviderTiles("OpenStreetMap") |>
+  addCircleMarkers(data = tri_la_2023,
+                   color = "black",
+                   fillColor = "white",
+                   fillOpacity = 0.8,
+                   radius = 3,
+                   weight = 1,
+                   stroke = TRUE)
 ```
 
 :::
@@ -112,6 +125,16 @@ Copy and paste the last map that you created below. We are going to size each ci
 
 ```{r}
 # Copy map colored by bins here!
+la_map |> leaflet(width = "100%") |>
+  setView(lat = 30.5, lng = -91.5, zoom = 6) |>
+  addProviderTiles("OpenStreetMap") |>
+  addCircleMarkers(data = tri_la_2023,
+                   color = "black",
+                   fillColor = "white",
+                   fillOpacity = 0.8,
+                   radius = ~X107..TOTAL.RELEASES/1000000,
+                   weight = 1,
+                   stroke = TRUE)
 ```
 
 :::
@@ -124,7 +147,8 @@ Create a categorical palettes below using `colorFactor()`, setting the `palette`
 ```{r}
 #Uncomment below to create the palette
 
-#pal_fact <- 
+pal_fact <- colorFactor(palette = "Set2",
+                        domain = tri_la_2023$X23..INDUSTRY.SECTOR)
 
 
 ```
@@ -143,6 +167,23 @@ Your map should look like mine below.
 
 ```{r}
 # Copy the map here!
+pal_fact <- colorFactor(palette = "Set2",
+                        domain = tri_la_2023$X23..INDUSTRY.SECTOR)
+
+la_map |> leaflet(width = "100%") |>
+  setView(lat = 30.5, lng = -91.5, zoom = 6) |>
+  addProviderTiles("OpenStreetMap") |>
+  addCircleMarkers(data = tri_la_2023,
+                   color = "black",
+                   fillColor = ~pal_fact(X23..INDUSTRY.SECTOR),
+                   fillOpacity = 0.8,
+                   radius = ~X107..TOTAL.RELEASES/1000000,
+                   weight = 1,
+                   stroke = TRUE) |>
+  addLegend(data = tri_la_2023,
+            pal = pal_fact,
+            values = ~X23..INDUSTRY.SECTOR,
+            title = "TRI Releases in Pounds")
 ```
 
 :::
@@ -157,9 +198,13 @@ pal_num <- colorNumeric(palette="YlOrRd",
                         domain = tri_la_2023$X107..TOTAL.RELEASES)
 #Uncomment below to create the other two palettes.
 
-#pal_bin <- 
+pal_bin <- colorBin(palette="YlOrRd", 
+                    domain = tri_la_2023$X107..TOTAL.RELEASES,
+                    bins = 6)
 
-#pal_quant <- 
+pal_quant <- colorQuantile(palette="YlOrRd", 
+                           domain = tri_la_2023$X107..TOTAL.RELEASES,
+                           n = 4)
 
 ```
 
@@ -179,11 +224,65 @@ Adjust the legends for each of the maps.
 Your maps should look like mine below. 
 
 ```{r}
+pal_num <- colorNumeric(palette="YlOrRd", 
+                        domain = tri_la_2023$X107..TOTAL.RELEASES)
+pal_bin <- colorBin(palette="YlOrRd", 
+                    domain = tri_la_2023$X107..TOTAL.RELEASES,
+                    bins = 6)
+pal_quant <- colorQuantile(palette="YlOrRd", 
+                           domain = tri_la_2023$X107..TOTAL.RELEASES,
+                           n = 4)
+
 # Copy map first time here!
+
+la_map |> leaflet(width = "100%") |>
+  setView(lat = 30.5, lng = -91.5, zoom = 6) |>
+  addProviderTiles("OpenStreetMap") |>
+  addCircleMarkers(data = tri_la_2023,
+                   color = "black",
+                   fillColor = ~pal_num(X107..TOTAL.RELEASES),
+                   fillOpacity = 0.8,
+                   radius = ~X107..TOTAL.RELEASES/1000000,
+                   weight = 1,
+                   stroke = TRUE) |>
+  addLegend(data = tri_la_2023,
+            pal = pal_num,
+            values = ~X107..TOTAL.RELEASES,
+            title = "TRI Releases in Pounds")
 
 # Copy map second time here!
 
+la_map |> leaflet(width = "100%") |>
+  setView(lat = 30.5, lng = -91.5, zoom = 6) |>
+  addProviderTiles("OpenStreetMap") |>
+  addCircleMarkers(data = tri_la_2023,
+                   color = "black",
+                   fillColor = ~pal_bin(X107..TOTAL.RELEASES),
+                   fillOpacity = 0.8,
+                   radius = ~X107..TOTAL.RELEASES/1000000,
+                   weight = 1,
+                   stroke = TRUE) |>
+  addLegend(data = tri_la_2023,
+            pal = pal_bin,
+            values = ~X107..TOTAL.RELEASES,
+            title = "TRI Releases in Pounds")
+
 # Copy map third time here!
+
+la_map |> leaflet(width = "100%") |>
+  setView(lat = 30.5, lng = -91.5, zoom = 6) |>
+  addProviderTiles("OpenStreetMap") |>
+  addCircleMarkers(data = tri_la_2023,
+                   color = "black",
+                   fillColor = ~pal_quant(X107..TOTAL.RELEASES),
+                   fillOpacity = 0.8,
+                   radius = ~X107..TOTAL.RELEASES/1000000,
+                   weight = 1,
+                   stroke = TRUE) |>
+  addLegend(data = tri_la_2023,
+            pal = pal_quant,
+            values = ~X107..TOTAL.RELEASES,
+            title = "TRI Releases in Pounds")
 ```
 
 :::
@@ -192,6 +291,8 @@ Your maps should look like mine below.
 ###### Question 10 (3 pts)
 
 Below explain the following: Why do the colors appear differently on each map? Which map best represents the distribution of values in `X107..TOTAL.RELEASES`?
+
+A: The colors appear differently on each map due to the way that each sequential color palette is categorized. In colorNumeric(), the values are assigned to a spectrum; in colorBin(), the values are assigned to different sections on an interval of 2,000,000; and in colorQuantile(), the values are assigned by grouping the numbers into equally sized quantiles--in this map, in terms of fourths and in percentages. The map using colorNumeric() is the best map to represent the distribution of values in X107..TOTAL.RELEASES because the values in this variable are numerical, so they should be mapped using a color palette that specifically deals with numerical values.
 
 :::
 
@@ -209,6 +310,23 @@ Your popups should look like mine in the map below.
 
 ```{r}
 # Copy previous map here!
+la_map |> leaflet(width = "100%") |>
+  setView(lat = 30.5, lng = -91.5, zoom = 6) |>
+  addProviderTiles("OpenStreetMap") |>
+  addCircleMarkers(data = tri_la_2023,
+                   color = "black",
+                   fillColor = ~pal_bin(X107..TOTAL.RELEASES),
+                   fillOpacity = 0.8,
+                   radius = ~X107..TOTAL.RELEASES/1000000,
+                   weight = 1,
+                   stroke = TRUE,
+                   popup = ~paste("<b>", X4..FACILITY.NAME, "</b><br><i>", X23..INDUSTRY.SECTOR, "</i><br>", X..CHEMICAL.TEXT),
+                   popupOptions = popupOptions(maxHeight = 200,
+                                closeOnClick = TRUE)) |>
+  addLegend(data = tri_la_2023,
+            pal = pal_bin,
+            values = ~X107..TOTAL.RELEASES,
+            title = "TRI Releases in Pounds")
 ```
 
 :::
