@@ -1,0 +1,174 @@
+---
+title: 'Lab #1: R and Understanding Datasets (30 pts)'
+author: "Ysabella Leonelli"
+format:
+  html:
+    embed-resources: true
+editor: source
+knitr:
+  opts_chunk:
+    message: false
+---
+
+```{r}
+library(tidyverse)
+library(rscorecard)
+sc_key("8DuokeWUfYWVdvrQdlPsaN9P3cQRkyteypNTKrtu") # Replace with your own token!!
+
+scorecard <- sc_init() |>
+  sc_year(2022) |>                 #Note how we are looking at only 2024 data here!
+  sc_filter(stabbr == "MA") |>     #Note how we are looking at only Massachusetts data here!
+  sc_select(unitid, instnm, city, highdeg, control, ugds, adm_rate, costt4_a, costt4_p, pcip27, pctfloan, admcon7, wdraw_orig_yr2_rt, cdr3) |>
+  sc_get()
+## TA Feedback: Looks great remember to change comments to things that will help you understand your code!
+```
+
+
+
+
+```{r}
+head(scorecard)
+str(scorecard)
+
+```
+
+
+## Questions
+
+::: {.callout-important}
+###### Question 1 (5 pts)
+See if you can identify a unique key for this dataset. Write some lines of code to determine whether the column you've identified can act as unique key for the data. Hint: You need to check whether the values in the column ever repeat.
+
+
+```{r}
+# Write code to calculate number of rows in scorecard
+
+nrow(scorecard) 
+#TA Feedback: +3 for using nrow and getting the correct number of rows
+
+# Write code to calculate the number of unique values in the column you've identified as a unique key 
+
+scorecard$unitid |> unique() |> length()
+#TA Feedback: +3 for using unique and unitid
+
+# Do these numbers match?
+# Yes
+#TA Feedback: try coding nrow(scorecard) == scorecard$unitid |> unique() |> length this means that the number of rows will now be equivalent to the number of rows with a unique unit ID, and will then print the length. It will have the exact same result as your code just a bit more effcient since it only uses one line.
+#Q1 total: 6 points
+```
+
+:::
+
+::: {.callout-important}
+###### Question 2 (5 pts)
+At this point, you've probably figured out that each row in this dataset is a higher education institution. However, there are many different ways that we can define higher education institutions, and that will impact what gets included and excluded in our data. Referencing the Technical Documentation, locate a definition for the unit of observation in this dataset. What institutions are included, and what institutions are excluded? Summarize a definition below.
+
+According to the "About" PDF of the Technical Documentation of the College Scorecard data sheet, what they define as a higher education institution is a school that receives federal financial funding, and also schools that meet similar criteria to Title IV program participating institutions. What's NOT included in the data sheet are schools that don't participate at all in Title IV programs.
+## TA Feedback: Nice definition, sums it up well, +5
+## Total for Q1 and Q2: 11 points
+
+:::
+
+::: {.callout-important}
+
+###### Question 3 (5 pts)
+For each of the variable names in the `scorecard` data frame, look up the associated name in the data dictionary. You will need to search for the variable name in the sixth column of the data dictionary (I recommend using Ctrl-F to quickly locate the variable name in the spreadsheet.) Once you've found the variable name, reference column 1 to determine what this variable means, and reference columns 7 and 8 to see what possible values will appear in that column.
+
+Identify one nominal variable, one ordinal variable, one discrete variable, and one continuous variable in `scorecard` and list their variable names below. Then uncomment the lines below and use the `typeof()` function to see how `R` determined their data types. Did any surprise you?
+
+```{r}
+typeof(scorecard$highdeg)
+typeof(scorecard$instnm)
+typeof(scorecard$ugds)
+typeof(scorecard$adm_rate)
+#TA Feedback: +2 for attempting
+#TA Feedback: +2 for correct variable types
+
+
+```
+
+The adm_rate variable surprised me because R typed it as a "double."
+##TA Feedback: +1 for writing what suprised you!, 
+
+
+##TA Feedback: Remeber to comment in what the variable types were!
+##Q1-Q3 total: 16 points
+
+:::
+
+::: {.callout-important}
+###### Question 4 (5 pts)
+Write code below to recode the `admcon7` variable and store the results in a new variable in `scorecard` called `admcon7_text`. You'll need to look up the values in the data dictionary. If you've done this correctly, running this code should produce a barplot that displays multiple bars.
+
+
+
+```{r}
+#| eval: false
+#| code-fold: false
+scorecard$admcon7_text <-
+  recode(
+    scorecard$admcon7, 
+   '1' = "not considered", # i did ctrl+f and looked for the meaning of admcon7 and what the values meant
+   '2' = "considered",
+   '3' = "required",
+    .default = NA_character_
+  )
+
+ggplot(scorecard, aes(x = admcon7_text)) +
+  geom_bar()
+#TA Feedback: It is best to save the code for both graphs that way we can more easily compare them and don't overwrite the old graph with the new one. 
+#TA Feedback: Also please double check your labels, below is the labels you should have -3 for mostly wrong
+#Correct labels: 
+#| eval: false
+#| code-fold: false
+scorecard$admcon7_text <-
+  recode(
+    scorecard$admcon7, 
+    "1" = "Required", 
+    "2" = "Recommended", 
+    "3" = "Neither required nor recommended",
+    "4" = "Do not know", 
+    "5" = "Considered but not required",
+    .default = NA_character_
+  )
+
+#Q1-Q4 total: 18 points
+```
+
+
+
+:::
+
+::: {.callout-important}
+
+###### Question 5 (5 pts)
+In a code chunk below, calculate the number of missing values in both the `costt4_a` and the `costt4_p` columns. Reference the NOTES column in the data dictionary to determine why there are so many `NA` values in these columns. Add a comment to the code chunk below, explaining the reason for missing values in these columns.
+
+```{r}
+sum(is.na(scorecard$costt4_a))
+sum(is.na(scorecard$costt4_p))
+
+# The reason for all the missing values is because costt4_a and costt4_p are only for academic-year institutions and program-year institutions, respectively. So if the institution is neither of those, it's reported as NA.
+#TA Feedback: This looks great your code and comment are correct
+#Q1-5 total: 23 points
+```
+
+:::
+
+::: {.callout-important}
+
+###### Question 6 (5 pts)
+
+Referencing the College Scorecard data documentation, see if you can determine which students are included in calculations of earnings and debt. How might the data’s coverage bias the values that get reported? What might be the social consequences of these biases? Share your ideas on our discussions Slack channel.
+
+(Typing it here because this assignment is late)
+The College Scorecard calculates the earnings and the debt measures using only the students who received federal financial aid, meaning the data doesn't include all students at an institution: only those who qualified for and received that aid. Because aid recipients are more likely to come from low-income backgrounds and tend to borrow money to pay for college, the reported debt and earnings figures may not represent the entire student body, so schools that have more low-income students may appear to have worse outcomes, therefore influencing the public's perception of said school.
+##TA Feedback: This looks great thanks for typing here. +5
+##Total points: 28/30 points, or 93%
+```{r}
+28/30
+```
+
+
+:::
+

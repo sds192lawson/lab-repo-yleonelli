@@ -1,0 +1,99 @@
+---
+title: "17_9 Problem 2 from Reading"
+format: html
+editor: visual
+---
+
+```{r}
+install.packages("pdxTrees")
+library(pdxTrees)
+library(tidyverse)
+library(leaflet)
+```
+
+```{r}
+pdxTrees_parks <- get_pdxTrees_parks(park = NULL)
+```
+
+```{r}
+pal <- colorFactor("Set1", pdxTrees_parks$species)
+
+pdxTrees_parks |>
+  leaflet() |>
+  addTiles() |>
+  addCircleMarkers(
+    lng = ~Longitude,
+    lat = ~Latitude,
+    color = ~pal(Species),
+    radius = 4,
+    fillOpacity = 0.7,
+    stroke = FALSE,
+    popup = ~paste(
+      "Species:", Species, "<br>",
+      "Genus:", Genus, "<br>",
+      "Condition:", Condition)) |>
+  addLegend(
+    position = "bottomright",
+    pal = pal,
+    values = pdxTrees_parks$Species,
+    title = "Species")
+```
+
+
+```{r}
+pal_val <- colorNumeric("YlGn", pdxTrees_parks$Total_Annual_Services)
+
+pdxTrees_parks |>
+  leaflet() |>
+  addTiles() |>
+  addCircleMarkers(
+    lng = ~Longitude,
+    lat = ~Latitude,
+    color = ~pal_val(Total_Annual_Services),
+    radius = 5,
+    fillOpacity = 0.7,
+    stroke = FALSE,
+    popup = ~paste(
+      "Species:", Species, "<br>",
+      "Annual Services:", Total_Annual_Services, "<br>",
+      "Carbon Storage:", Carbon_Storage_value)) |>
+  addLegend(
+    position = "bottomright",
+    pal = pal_val,
+    values = pdxTrees_parks$Total_Annual_Services,
+    title = "Annual Services")
+```
+
+```{r}
+pdxTrees_parks$Status <- ifelse(
+  pdxTrees_parks$Condition == "Poor",
+  "Problematic",
+  "Normal")
+
+pal_status <- colorFactor(
+  c("red", "green"),
+  pdxTrees_parks$Status)
+
+pdxTrees_parks |>
+  leaflet() |>
+  addTiles() |>
+  addCircleMarkers(
+    lng = ~Longitude,
+    lat = ~Latitude,
+    color = ~pal_status(Status),
+    radius = 5,
+    fillOpacity = 0.7,
+    stroke = FALSE,
+    popup = ~paste(
+      "Species:", Species, "<br>",
+      "Condition:", Condition, "<br>",
+      "Annual Services:", Total_Annual_Services)) |>
+  addLegend(
+    position = "bottomright",
+    pal = pal_status,
+    values = pdxTrees_parks$Status,
+    title = "Tree Status")
+```
+
+
+
